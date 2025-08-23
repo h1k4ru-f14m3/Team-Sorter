@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Hello!{% endblock %}
+
+{% block main %}
+
+<form>
+    <div class="leaders">
+        <input class="form-control" placeholder="Leader-Name">
+        <textarea class="form-control">Member1</textarea>
+        <button class="form-control removeDiv">Remove</button>
+    </div>
+</form>
+<button id="addMore">+</button>
+
+
+<script type="module">
+    function removeBtnListener(removeBtn) {
+        removeBtn.addEventListener('click', function() {
+            event.preventDefault();
+            if (potCount === 1) {
+                return;
+            }
+
+            const parent_element = removeBtn.parentElement;
+            parent_element.remove();
+            potCount -= 1;
+        });
+    }
+
+    let potCount = 1;
+    let btn_add = document.querySelector('#addMore');
+    let form = document.querySelector('form');
+
+    removeBtnListener(form.querySelector('.removeDiv'));
+
+    btn_add.addEventListener('click', function() {
+        event.preventDefault();
+        const to_copy = document.querySelector('form div');
+        const to_paste = to_copy.cloneNode(true);
+        const btn_remove = to_paste.querySelector('.removeDiv');
+
+        removeBtnListener(btn_remove);
+
+        form.appendChild(to_paste);
+        potCount += 1;
+    });
+</script>
+
+{% endblock %}
