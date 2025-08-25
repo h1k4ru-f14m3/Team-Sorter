@@ -2,10 +2,11 @@ import functions.global_var
 import random
 
 
-def create_teams_list(count):
+def create_teams_list(leaders):
     teams = list()
-    for i in range(count):
+    for i in range(len(leaders)):
         teams.append(functions.global_var.Team())
+        teams[i].leader = leaders[i]
 
     return teams
 
@@ -35,3 +36,5 @@ def assign_teams(teams, pots):
 
             if attempts == team_count:
                 teams[team_assign_index].add_member(person)
+
+    return teams

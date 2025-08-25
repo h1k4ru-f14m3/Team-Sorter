@@ -19,6 +19,7 @@ class Team():
 
         self.id = Team._id_counter
         self.members = list()
+        self.leader = str()
 
 
     def add_member(self,member):

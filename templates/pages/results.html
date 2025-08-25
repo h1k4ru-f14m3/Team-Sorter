@@ -1,0 +1,10 @@
+{% if not message %}
+    {% for row in results %}
+    <div class="m-2">
+        <h1 class="h3">{{ row.leader }}</h1>
+        <textarea class="form-control" readonly>{{ row.members }}</textarea>
+    </div>
+    {% endfor %}
+{% else %}
+    <p></p>
+{% endif %}

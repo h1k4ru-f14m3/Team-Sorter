@@ -3,47 +3,101 @@
 {% block title %}Hello!{% endblock %}
 
 {% block main %}
+<nav class="navbar sticky-top navbar-light shadow-sm" style="background-color: rgba(0,0,0,0.01); backdrop-filter: blur(8px);">
+    <div class="container-fluid">
+        <h1 class="navbar-brand mb-0">Team Sorter</h1>
+        <button class="btn btn-outline-primary" id="toggleTheme">Dark Mode</button>
+    </div>
+</nav>
 
-<form>
-    <div class="leaders">
-        <input class="form-control" placeholder="Leader-Name">
-        <textarea class="form-control">Member1</textarea>
+<form action="/sort" method="post">
+    <div class="leaders m-2">
+        <label for="leaders">Leaders:</label>
+        <textarea class="form-control leader_names w-25 mx-auto" placeholder="Leader names" name="leaders"></textarea>
+    </div>
+    <div class="pots m-2" id="pot_1">
+        <input class="form-control" placeholder="Pot-Name`\n`(Doesn't affect anything)" value="Pot-1">
+        <textarea class="form-control members">Member1</textarea>
         <button class="form-control removeDiv">Remove</button>
     </div>
+    <div class="btns m-2">
+        <button id="addMore" class="btn btn-outline-primary">+</button>
+    </div>
 </form>
-<button id="addMore">+</button>
 
+<div class="d-flex justify-content-center m-2">
+    <input type="button" value="Sort" id="submitBtn" class="btn btn-outline-primary" style="width: 50%;">
+</div>
+
+<div class="results m-5">
+
+</div>
 
 <script type="module">
-    function removeBtnListener(removeBtn) {
-        removeBtn.addEventListener('click', function() {
-            event.preventDefault();
-            if (potCount === 1) {
-                return;
-            }
+    import { latestTeamID } from "{{ url_for('static', filename='functions.js') }}";
 
-            const parent_element = removeBtn.parentElement;
-            parent_element.remove();
-            potCount -= 1;
-        });
-    }
+    const submitBtn = document.querySelector('#submitBtn');
 
-    let potCount = 1;
-    let btn_add = document.querySelector('#addMore');
-    let form = document.querySelector('form');
-
-    removeBtnListener(form.querySelector('.removeDiv'));
-
-    btn_add.addEventListener('click', function() {
+    // Submit Button
+    submitBtn.addEventListener('click', function(event){
         event.preventDefault();
-        const to_copy = document.querySelector('form div');
-        const to_paste = to_copy.cloneNode(true);
-        const btn_remove = to_paste.querySelector('.removeDiv');
+        let formData = new FormData();
 
-        removeBtnListener(btn_remove);
+        console.log(latestTeamID);
+        const divs = document.querySelectorAll('.pots');
+        const resultsDiv = document.querySelector('.results');
+        const leader_names = document.querySelector('.leaders .leader_names').value;
+        formData.append('leaders', leader_names);
 
-        form.appendChild(to_paste);
-        potCount += 1;
+        for (let i = 0; i < latestTeamID; i++) {
+            if (!divs[i]) {
+                continue;
+            }
+            
+            const members = divs[i].querySelector('.members').value;
+
+            formData.append(`${i}_members`, members);
+            
+            // console.log(leader_name);
+            // console.log(members);
+        }
+
+        fetch('/sort', {
+            method: "POST",
+            body: formData
+        })
+        .then(result => {
+            if (!result.ok) {
+                return 
+            }
+            return result.text();
+        })
+        .then(
+            data => {
+                resultsDiv.innerHTML = data;
+
+                window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: "smooth"
+                });
+            }
+        );
+    });
+
+
+    // Dark and Light mode
+    const toggleThemeBTN = document.querySelector("#toggleTheme");
+    const htmlElement = document.documentElement;
+
+    toggleThemeBTN.addEventListener("click", function(event) {
+        if (htmlElement.getAttribute("data-bs-theme") === "light") {
+            toggleThemeBTN.innerHTML = "Light Mode";
+            htmlElement.setAttribute("data-bs-theme", "dark");
+        }
+        else {
+            toggleThemeBTN.innerHTML = "Dark Mode";
+            htmlElement.setAttribute("data-bs-theme", "light");
+        }
     });
 </script>
 

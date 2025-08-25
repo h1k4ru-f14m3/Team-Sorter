@@ -1,11 +1,65 @@
-form {
+html, body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+form, .results {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
 }
 
-form div {
+form div, .results div {
     display: flex;
     flex-direction: column;
-    margin: 8px;
 }
+
+textarea.form-control {
+    height: 15rem;
+    resize: none;
+}
+
+.leaders {
+    flex-basis: 100%;
+    justify-content: center;
+    text-align: center;
+}
+
+.leaders label {
+    margin-bottom: 0.5%;
+}
+
+.btns {
+    justify-content: center;
+}
+
+.pots {
+    animation: fadeIn 0.2s;
+}
+@keyframes fadeIn {
+    0%{
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    100%{
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.fadeOut {
+    animation: fadeOut 0.15s;
+}
+@keyframes fadeOut {
+    0%{
+        
+    }
+    100%{
+        opacity: 0;
+        transform: translateX(-10px);
+    } 
+}
+
+/* label {
+    text-align: center;
+    margin-bottom: 8px;
+} */
