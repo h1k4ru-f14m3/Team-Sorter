@@ -27,6 +27,9 @@ def index():
 def sort():
     if request.method == "POST":
         leader_names = request.form.get('leaders').strip().replace('\r\n', ';').split(';')
+        if not leader_names[0]:
+            return render_template('pages/results.html', message="You must have at least one leader!"), 201
+        
         pots_list = list()
         pots_count = len(request.form) - 1
 
@@ -38,10 +41,6 @@ def sort():
 
         for i in range(len(teams)):
             teams[i].members = list_to_string(teams[i].members)
-            print(f'Team{i + 1}:\r\n{teams[i].members}')
+            # print(f'Team{i + 1}:\r\n{teams[i].members}')
 
         return render_template('pages/results.html', results=teams), 200
-
-        # print(pots_list)
-
-        return "", 200

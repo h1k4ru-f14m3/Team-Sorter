@@ -3,6 +3,12 @@
 {% block title %}Hello!{% endblock %}
 
 {% block main %}
+<div class="custom-toast-container">
+    <!-- <div class="custom-toast shadow-lg m-3">
+        There must be at least 2 leaders!
+    </div> -->
+</div>
+
 <nav class="navbar sticky-top navbar-light shadow-sm" style="background-color: rgba(0,0,0,0.01); backdrop-filter: blur(8px);">
     <div class="container-fluid">
         <h1 class="navbar-brand mb-0">Team Sorter</h1>
@@ -18,14 +24,14 @@
     <div class="pots m-2" id="pot_1">
         <input class="form-control" placeholder="Pot-Name`\n`(Doesn't affect anything)" value="Pot-1">
         <textarea class="form-control members">Member1</textarea>
-        <button class="form-control removeDiv">Remove</button>
+        <button class="btn btn-outline-danger removeDiv">Remove</button>
     </div>
     <div class="btns m-2">
         <button id="addMore" class="btn btn-outline-primary">+</button>
     </div>
 </form>
 
-<div class="d-flex justify-content-center m-2">
+<div class="d-flex m-2 flex-column align-items-center">
     <input type="button" value="Sort" id="submitBtn" class="btn btn-outline-primary" style="width: 50%;">
 </div>
 
@@ -46,6 +52,7 @@
         console.log(latestTeamID);
         const divs = document.querySelectorAll('.pots');
         const resultsDiv = document.querySelector('.results');
+        const toastDiv = document.querySelector('.custom-toast-container');
         const leader_names = document.querySelector('.leaders .leader_names').value;
         formData.append('leaders', leader_names);
 
@@ -67,19 +74,36 @@
             body: formData
         })
         .then(result => {
-            if (!result.ok) {
-                return 
-            }
-            return result.text();
+            return result.text().then(data => ({
+                status: result.status,
+                data
+            }));
         })
         .then(
-            data => {
-                resultsDiv.innerHTML = data;
+            finalResult => {
+                if (finalResult.status === 200){
+                    resultsDiv.innerHTML = finalResult.data;
+                    
+                    window.scrollTo({
+                        top: document.body.scrollHeight,
+                        behavior: "smooth"
+                    });
+                }
+                else {
+                    toastDiv.innerHTML = finalResult.data;
 
-                window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: "smooth"
-                });
+                    const innerToast = toastDiv.querySelector('.custom-toast');
+                    innerToast.classList.add('slideInTop');
+
+                    setTimeout(() => {
+                        innerToast.classList.remove('slideInTop');
+                        innerToast.classList.add('slideOutTop');
+
+                        innerToast.addEventListener('animationend', function() {
+                            innerToast.remove();
+                        }, {once: true});
+                    }, 3000)
+                }
             }
         );
     });

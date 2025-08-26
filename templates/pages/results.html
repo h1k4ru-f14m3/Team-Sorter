@@ -6,5 +6,7 @@
     </div>
     {% endfor %}
 {% else %}
-    <p></p>
+    <div class="custom-toast shadow-lg m-3">
+        {{ message }}
+    </div>
 {% endif %}
